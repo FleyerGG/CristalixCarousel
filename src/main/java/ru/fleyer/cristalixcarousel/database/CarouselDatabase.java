@@ -15,6 +15,7 @@ import java.util.Objects;
 
 public class CarouselDatabase {
     public static CarouselDatabase INSTANCE = new CarouselDatabase();
+    CarouselManager manager = CarouselManager.INSTANCE;
 
     private MongoClient mongoClient;
     private MongoDatabase db;
@@ -23,13 +24,12 @@ public class CarouselDatabase {
     public void connect() {
 
         mongoClient = new MongoClient(
-                CarouselManager.INSTANCE.config().getString("db.host"),
-                CarouselManager.INSTANCE.config().getInt("db.port"));
+                manager.config().getString("db.host"),
+                manager.config().getInt("db.port"));
 
-        db = mongoClient.getDatabase(CarouselManager.INSTANCE.config().getString("db.database"));
-        collection = db.getCollection(CarouselManager.INSTANCE.config().getString("db.collection"));
+        db = mongoClient.getDatabase(manager.config().getString("db.database"));
+        collection = db.getCollection(manager.config().getString("db.collection"));
     }
-
 
     public void startRidingSession(Player player, Horse horse) {
         val doc = new Document("player", player.getUniqueId().toString())

@@ -19,6 +19,7 @@ import java.io.IOException;
 public class CristalixCarousel extends JavaPlugin {
     @Getter
     public static CristalixCarousel instance;
+    CarouselManager manager = CarouselManager.INSTANCE;
 
     @Override
     public void onEnable() {
@@ -31,7 +32,7 @@ public class CristalixCarousel extends JavaPlugin {
 
         try {
             ridesFile.createNewFile();
-            CarouselManager.INSTANCE.exportConfig();
+            manager.exportConfig();
         } catch (IOException exception) {
             exception.printStackTrace();
         }
@@ -43,15 +44,13 @@ public class CristalixCarousel extends JavaPlugin {
         protocolManager.addPacketListener(new CarouselPacketAdapter(this, new PacketType[]{Client.STEER_VEHICLE}));
 
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-            Carousel.getCarousel().values().forEach(Carousel::update);
+            manager.getCarousel().values().forEach(Carousel::update);
         }, 1L, 1L);
-
-
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        Carousel.getCarousel().values().forEach(Carousel::despawn);
+        manager.getCarousel().values().forEach(Carousel::despawn);
     }
 }

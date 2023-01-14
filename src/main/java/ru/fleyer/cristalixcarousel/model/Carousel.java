@@ -1,29 +1,21 @@
 package ru.fleyer.cristalixcarousel.model;
 
-import gnu.trove.map.hash.THashMap;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Horse;
 import ru.fleyer.cristalixcarousel.model.manager.CarouselManager;
 import ru.fleyer.cristalixcarousel.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Carousel {
-    @Getter
-    static final Map<String, Carousel> carousel = new THashMap<>();
-    @Getter
-    static final Map<Entity, Carousel> seats = new THashMap<>();
-    @Getter
-    static final Map<Entity, Entity> horseSeats = new THashMap<>();
+    final CarouselManager manager = CarouselManager.INSTANCE;
     final List<ArmorStand> armorStands = new ArrayList<>();
     final List<Horse> horses = new ArrayList<>();
     final String name;
@@ -40,7 +32,7 @@ public class Carousel {
         this.radius = radius;
         this.carCount = carCount;
         this.clockwise = clockwise;
-        carousel.put(name, this);
+        manager.getCarousel().put(name, this);
     }
 
     public void spawn() {
@@ -73,12 +65,11 @@ public class Carousel {
             horse.setSilent(true);
             horse.setAI(false);
 
-            seats.put(car, this);
-            horseSeats.put(horse, car);
+            manager.getSeats().put(car, this);
+            manager.getHorseSeats().put(horse, car);
 
             armorStands.add(car);
             horses.add(horse);
-
         }
     }
 
@@ -88,12 +79,12 @@ public class Carousel {
 
         armorStands.forEach(armorStand -> {
             armorStand.remove();
-            seats.remove(armorStand);
+            manager.getSeats().remove(armorStand);
         });
 
         horses.forEach(horse -> {
             horse.remove();
-            horseSeats.remove(horse);
+            manager.getHorseSeats().remove(horse);
         });
 
         horses.clear();
@@ -133,11 +124,6 @@ public class Carousel {
             horse.teleport(loc);
         }
 
-        if (this.clockwise) {
-            this.degrees += this.speed;
-        } else {
-            this.degrees -= this.speed;
-        }
+        this.degrees += this.clockwise ? this.speed : -this.speed;
     }
-
 }

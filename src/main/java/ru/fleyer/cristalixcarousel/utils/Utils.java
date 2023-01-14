@@ -22,9 +22,9 @@ public class Utils {
 
     public Location degrees(Location loc, double radius, double dgrs) {
 
-        val x = loc.getX() + radius * Math.cos(dgrs * 3.141592653589793D / 180.0D);
+        val x = loc.getX() + radius * Math.cos(dgrs * Math.PI / 180.0D);
         val y = loc.getY();
-        val z = loc.getZ() + radius * Math.sin(dgrs * 3.141592653589793D / 180.0D);
+        val z = loc.getZ() + radius * Math.sin(dgrs * Math.PI / 180.0D);
 
         return new Location(loc.getWorld(), x, y, z);
     }

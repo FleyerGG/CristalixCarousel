@@ -11,6 +11,7 @@ import ru.fleyer.cristalixcarousel.model.manager.CarouselManager;
 import java.io.IOException;
 
 public class CarouselCommand implements CommandExecutor {
+    CarouselManager manager = CarouselManager.INSTANCE;
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
@@ -57,7 +58,7 @@ public class CarouselCommand implements CommandExecutor {
                         Boolean.parseBoolean(args[4]));
 
                 try {
-                    CarouselManager.INSTANCE.exportRide(carousel);
+                    manager.exportRide(carousel);
                 } catch (IOException exception) {
                     player.sendMessage("§cОшибка: что-то пошло не так при создании карусели. Ошибка входа в консоль!");
                     exception.printStackTrace();
@@ -83,7 +84,7 @@ public class CarouselCommand implements CommandExecutor {
                     return true;
                 }
 
-                (Carousel.getCarousel().get(args[1])).setSpeed(speed);
+                (manager.getCarousel().get(args[1])).setSpeed(speed);
                 player.sendMessage("§aСкорость карусели " + args[1] + " установлена на " + speed + "!");
                 return true;
             }
@@ -93,12 +94,12 @@ public class CarouselCommand implements CommandExecutor {
                     return false;
                 }
 
-                if (Carousel.getCarousel().containsKey(args[1]) && (Carousel.getCarousel().get(args[1])).isSpawned()) {
+                if (manager.getCarousel().containsKey(args[1]) && (manager.getCarousel().get(args[1])).isSpawned()) {
                     player.sendMessage("§cКарусель " + args[1] + " уже заспавнена!");
                     return true;
                 }
 
-                carousel = CarouselManager.INSTANCE.importRide(args[1]);
+                carousel = manager.importRide(args[1]);
                 if (carousel == null) {
                     player.sendMessage("§cОшибка: Не удалось загрузить аттракцион, " +
                             "возможно, этого аттракциона не существует?");
@@ -119,7 +120,7 @@ public class CarouselCommand implements CommandExecutor {
                     return true;
                 }
 
-                (Carousel.getCarousel().get(args[1])).despawn();
+                (manager.getCarousel().get(args[1])).despawn();
                 player.sendMessage("§aКарусель " + args[1] + " успешно деспавнена!");
                 return true;
             }
@@ -129,14 +130,14 @@ public class CarouselCommand implements CommandExecutor {
                     return false;
                 }
 
-                if (Carousel.getCarousel().containsKey(args[1])) {
-                    carousel = Carousel.getCarousel().get(args[1]);
+                if (manager.getCarousel().containsKey(args[1])) {
+                    carousel = manager.getCarousel().get(args[1]);
                     carousel.despawn();
-                    Carousel.getCarousel().remove(args[1]);
+                    manager.getCarousel().remove(args[1]);
                 }
 
                 try {
-                    CarouselManager.INSTANCE.removeRide(args[1]);
+                    manager.removeRide(args[1]);
                 } catch (IOException exception) {
                     player.sendMessage("§cОшибка: что-то пошло не так с удалением аттракциона." +
                             " Ошибка входа в консоль!");
@@ -155,7 +156,7 @@ public class CarouselCommand implements CommandExecutor {
     }
 
     private boolean isCarouselSpawned(String name, Player player) {
-        if (!Carousel.getCarousel().containsKey(name)) {
+        if (!manager.getCarousel().containsKey(name)) {
             player.sendMessage("§cКарусель " + name + " не существует!");
             return true;
         } else {
@@ -164,7 +165,7 @@ public class CarouselCommand implements CommandExecutor {
     }
 
     private void help(Player player) {
-        for (val str : CarouselManager.INSTANCE.config().getStringList("help")) {
+        for (val str : manager.config().getStringList("help")) {
             player.sendMessage(str);
         }
     }

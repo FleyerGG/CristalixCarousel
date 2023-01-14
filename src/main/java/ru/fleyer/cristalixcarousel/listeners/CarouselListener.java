@@ -16,94 +16,101 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.spigotmc.event.entity.EntityDismountEvent;
 import ru.fleyer.cristalixcarousel.database.CarouselDatabase;
 import ru.fleyer.cristalixcarousel.model.Carousel;
+import ru.fleyer.cristalixcarousel.model.manager.CarouselManager;
 
 public class CarouselListener implements Listener {
+    CarouselManager manager = CarouselManager.INSTANCE;
 
     @EventHandler
-    public void onVehicleEnter(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof Horse) {
+    public void onVehicleEnter(PlayerInteractEntityEvent event) {
+        val horse = event.getRightClicked();
+        val player = event.getPlayer();
 
-            if (Carousel.getHorseSeats().containsKey(e.getRightClicked())) {
+        if (horse instanceof Horse) {
+            if (manager.getHorseSeats().containsKey(horse)) {
 
-                val seat = Carousel.getHorseSeats().get(e.getRightClicked());
+                val seat = manager.getHorseSeats().get(horse);
 
-                if (Carousel.getSeats().get(seat).isLocked()) {
-                    e.setCancelled(true);
+                if (manager.getSeats().get(seat).isLocked()) {
+                    event.setCancelled(true);
                     return;
                 }
 
-                e.setCancelled(true);
-                if (!e.getPlayer().isSneaking()) {
-                    CarouselDatabase.INSTANCE.startRidingSession(e.getPlayer(), (Horse) e.getRightClicked());
-                    seat.addPassenger(e.getPlayer());
+                event.setCancelled(true);
+                if (!player.isSneaking()) {
+                    CarouselDatabase.INSTANCE.startRidingSession(player, (Horse) horse);
+                    seat.addPassenger(player);
                 }
-
-
             }
         }
     }
 
     @EventHandler
     public void onHorseUnleash(EntityDismountEvent event) {
-        if (event.getDismounted() instanceof ArmorStand || event.getDismounted() instanceof Horse) {
+        val entity = event.getDismounted();
+
+        if (entity instanceof ArmorStand || entity instanceof Horse) {
             CarouselDatabase.INSTANCE.endRidingSession((Player) event.getEntity());
         }
     }
 
     @EventHandler
     public void onInteract(PlayerInteractAtEntityEvent e) {
-        if (e.getRightClicked() instanceof ArmorStand) {
+        val armorStand = e.getRightClicked();
 
-            if (!Carousel.getSeats().containsKey(e.getRightClicked())) {
+        if (armorStand instanceof ArmorStand) {
+
+            if (!manager.getSeats().containsKey(armorStand)) {
                 return;
             }
 
-            Carousel ride = Carousel.getSeats().get(e.getRightClicked());
+            Carousel ride = manager.getSeats().get(armorStand);
 
             if (ride.isLocked()) {
                 e.setCancelled(true);
                 return;
             }
 
-            if (e.getRightClicked().getPassengers().isEmpty()) {
-                e.getRightClicked().addPassenger(e.getPlayer());
+            if (armorStand.getPassengers().isEmpty()) {
+                armorStand.addPassenger(e.getPlayer());
             }
         }
 
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onChunkUnload(ChunkUnloadEvent e) {
-        for (val entity : Carousel.getSeats().keySet()) {
-            if (entity.getLocation().getChunk().equals(e.getChunk())) {
-                e.setCancelled(true);
+    public void onChunkUnload(ChunkUnloadEvent event) {
+        for (val entity : manager.getSeats().keySet()) {
+            if (entity.getLocation().getChunk().equals(event.getChunk())) {
+                event.setCancelled(true);
                 return;
             }
         }
-
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void onWorldUnload(WorldUnloadEvent e) {
-        for (val entity : Carousel.getSeats().keySet()) {
-            if (entity.getLocation().getWorld().equals(e.getWorld())) {
-                e.setCancelled(true);
+    public void onWorldUnload(WorldUnloadEvent event) {
+        for (val entity : manager.getSeats().keySet()) {
+            if (entity.getLocation().getWorld().equals(event.getWorld())) {
+                event.setCancelled(true);
                 return;
             }
         }
     }
 
     @EventHandler
-    public void onJoin(PlayerJoinEvent e) {
-        if (e.getPlayer().isInsideVehicle()) {
-            e.getPlayer().getVehicle().removePassenger(e.getPlayer());
+    public void onJoin(PlayerJoinEvent event) {
+        val player = event.getPlayer();
+        if (player.isInsideVehicle()) {
+            player.getVehicle().removePassenger(player.getPlayer());
         }
     }
 
     @EventHandler
-    public void onJoin(PlayerQuitEvent e) {
-        if (e.getPlayer().isInsideVehicle()) {
-            e.getPlayer().getVehicle().removePassenger(e.getPlayer());
+    public void onJoin(PlayerQuitEvent event) {
+        val player = event.getPlayer();
+        if (player.isInsideVehicle()) {
+            player.getVehicle().removePassenger(player);
         }
     }
 
