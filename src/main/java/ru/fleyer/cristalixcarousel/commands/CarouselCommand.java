@@ -1,17 +1,20 @@
 package ru.fleyer.cristalixcarousel.commands;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import ru.fleyer.cristalixcarousel.model.Carousel;
 import ru.fleyer.cristalixcarousel.model.manager.CarouselManager;
 
 import java.io.IOException;
 
+@RequiredArgsConstructor
 public class CarouselCommand implements CommandExecutor {
-    CarouselManager manager = CarouselManager.INSTANCE;
+    private final CarouselManager manager;
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {

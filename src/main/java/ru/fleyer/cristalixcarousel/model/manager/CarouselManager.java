@@ -3,6 +3,7 @@ package ru.fleyer.cristalixcarousel.model.manager;
 import gnu.trove.map.hash.THashMap;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Getter
+@RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CarouselManager {
     public static CarouselManager INSTANCE = new CarouselManager();

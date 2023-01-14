@@ -20,7 +20,7 @@ public class CristalixCarousel extends JavaPlugin {
     @Getter
     public static CristalixCarousel instance;
     CarouselManager manager = CarouselManager.INSTANCE;
-
+    CarouselDatabase database = CarouselDatabase.INSTANCE;
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -36,12 +36,12 @@ public class CristalixCarousel extends JavaPlugin {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-        CarouselDatabase.INSTANCE.connect();
-        getCommand("carousel").setExecutor(new CarouselCommand());
-        getServer().getPluginManager().registerEvents(new CarouselListener(), this);
+        database.connect();
+        getCommand("carousel").setExecutor(new CarouselCommand(manager));
+        getServer().getPluginManager().registerEvents(new CarouselListener(manager,database), this);
 
         ProtocolManager protocolManager = ProtocolLibrary.getProtocolManager();
-        protocolManager.addPacketListener(new CarouselPacketAdapter(this, new PacketType[]{Client.STEER_VEHICLE}));
+        protocolManager.addPacketListener(new CarouselPacketAdapter(this, new PacketType[]{Client.STEER_VEHICLE},manager));
 
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             manager.getCarousel().values().forEach(Carousel::update);

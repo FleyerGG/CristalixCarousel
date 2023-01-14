@@ -1,5 +1,6 @@
 package ru.fleyer.cristalixcarousel.listeners;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Horse;
@@ -18,8 +19,10 @@ import ru.fleyer.cristalixcarousel.database.CarouselDatabase;
 import ru.fleyer.cristalixcarousel.model.Carousel;
 import ru.fleyer.cristalixcarousel.model.manager.CarouselManager;
 
+@RequiredArgsConstructor
 public class CarouselListener implements Listener {
-    CarouselManager manager = CarouselManager.INSTANCE;
+    private final CarouselManager manager;
+    private final CarouselDatabase database;
 
     @EventHandler
     public void onVehicleEnter(PlayerInteractEntityEvent event) {
@@ -38,7 +41,7 @@ public class CarouselListener implements Listener {
 
                 event.setCancelled(true);
                 if (!player.isSneaking()) {
-                    CarouselDatabase.INSTANCE.startRidingSession(player, (Horse) horse);
+                    database.startRidingSession(player, (Horse) horse);
                     seat.addPassenger(player);
                 }
             }
@@ -50,7 +53,7 @@ public class CarouselListener implements Listener {
         val entity = event.getDismounted();
 
         if (entity instanceof ArmorStand || entity instanceof Horse) {
-            CarouselDatabase.INSTANCE.endRidingSession((Player) event.getEntity());
+            database.endRidingSession((Player) event.getEntity());
         }
     }
 

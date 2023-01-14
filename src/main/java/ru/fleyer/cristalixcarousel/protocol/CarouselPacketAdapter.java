@@ -7,10 +7,11 @@ import org.bukkit.plugin.Plugin;
 import ru.fleyer.cristalixcarousel.model.manager.CarouselManager;
 
 public class CarouselPacketAdapter extends PacketAdapter {
-    CarouselManager manager = CarouselManager.INSTANCE;
+    private CarouselManager manager;
 
-    public CarouselPacketAdapter(Plugin plugin, PacketType[] types) {
+    public CarouselPacketAdapter(Plugin plugin, PacketType[] types, CarouselManager carouselManager) {
         super(plugin, types);
+        manager = carouselManager;
     }
 
     public void onPacketSending(PacketEvent e) {

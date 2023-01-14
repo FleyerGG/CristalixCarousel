@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.bson.Document;
 import org.bukkit.entity.Horse;
@@ -15,14 +16,13 @@ import java.util.Objects;
 
 public class CarouselDatabase {
     public static CarouselDatabase INSTANCE = new CarouselDatabase();
-    CarouselManager manager = CarouselManager.INSTANCE;
+    private final CarouselManager manager = CarouselManager.INSTANCE;
 
     private MongoClient mongoClient;
     private MongoDatabase db;
     private MongoCollection<Document> collection;
 
     public void connect() {
-
         mongoClient = new MongoClient(
                 manager.config().getString("db.host"),
                 manager.config().getInt("db.port"));
