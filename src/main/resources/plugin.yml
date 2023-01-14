@@ -1,0 +1,8 @@
+name: CristalixCarousel
+version: '${project.version}'
+main: ru.fleyer.cristalixcarousel.CristalixCarousel
+authors: [ Fleyer001 ]
+depend: [ ProtocolLib ]
+commands:
+  carousel:
+    description: top cmd

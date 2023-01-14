@@ -1,0 +1,16 @@
+max-height: 1
+
+db:
+  host: "localhost"
+  port: 27017
+  database: "test"
+  collection: "ridingSessions"
+
+help:
+  - "§cСправка по карусели"
+  - " - §7/carousel create <название> <радиус> <кол-во лошадей> <кручение по часовой стрелке (true/false)>"
+  - " - §7/carousel setspeed <название> <скорость>"
+  - " - §7/carousel spawn <название>"
+  - " - §7/carousel despawn <название>"
+  - " - §7/carousel remove <название>"
+  - " "
